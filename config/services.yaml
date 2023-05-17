@@ -11,6 +11,10 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+    acme_api.event.authentication_success_listener:
+        class: App\EventListener\AuthListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuth }
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -20,5 +24,8 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\State\UserHashPassword:
+        bind:
+            $processor : '@api_platform.doctrine.orm.state.persist_processor'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
