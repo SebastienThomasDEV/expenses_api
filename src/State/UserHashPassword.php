@@ -18,13 +18,13 @@ class UserHashPassword implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        $data->eraseCredentials();
         if (!$data->getPlainPassword()) {
             return $this->processor->process($data, $operation, $uriVariables, $context);
         }
         $data->setRoles(['ROLE_USER']);
         $hashedPassword = $this->passwordHasher->hashPassword($data, $data->getPlainPassword());
         $data->setPassword($hashedPassword);
-        $data->eraseCredentials();
         return $this->processor->process($data, $operation, $uriVariables, $context);
     }
 }
