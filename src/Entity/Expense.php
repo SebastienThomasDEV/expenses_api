@@ -20,6 +20,11 @@ use ApiPlatform\Metadata\Put;
 #[ApiResource(
     operations: [
         new Get(),
+        new GetCollection(
+            uriTemplate: '/expenses/users/{id}',
+            
+
+        ),
         new GetCollection(),
         new Post(),
         new Put(),
@@ -36,19 +41,24 @@ class Expense
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?\DateTimeImmutable $date = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $category = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?float $amount = null;
 
     #[ORM\ManyToOne(inversedBy: 'expenses')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
     private ?User $userEntity = null;
 
     public function getId(): ?int
