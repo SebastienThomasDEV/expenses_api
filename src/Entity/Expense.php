@@ -15,22 +15,19 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ApiResource(
     operations: [
         new Get(),
-        new GetCollection(
-            uriTemplate: '/expenses/users/{id}',
-            
-
-        ),
         new GetCollection(),
         new Post(),
         new Put(),
         new Patch(),
         new Delete(),
     ],
+    normalizationContext: ['groups' => ['expense']],
 )]
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 class Expense
@@ -42,23 +39,30 @@ class Expense
 
     #[ORM\Column]
     #[Assert\NotBlank]
+    #[Assert\Type(\DateTimeImmutable::class)]
+    #[Groups('expense')]
     private ?\DateTimeImmutable $date = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups('expense')]
     private ?string $category = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups('expense')]
     private ?string $description = null;
 
     #[ORM\Column]
     #[Assert\NotBlank]
+    #[Assert\Type('float')]
+    #[Groups('expense')]
     private ?float $amount = null;
 
     #[ORM\ManyToOne(inversedBy: 'expenses')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
+    #[Groups('expense')]
     private ?User $userEntity = null;
 
     public function getId(): ?int

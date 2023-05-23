@@ -17,7 +17,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\State\UserHashPassword;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
         new Patch(processor: UserHashPassword::class),
         new Delete(),
     ],
+
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -57,6 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $plainPassword = null;
 
     #[ORM\OneToMany(mappedBy: 'userEntity', targetEntity: Expense::class, orphanRemoval: true)]
+    #[Groups('expense')]
     private Collection $expenses;
 
     public function __construct()
