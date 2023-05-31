@@ -29,6 +29,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Patch(),
         new Delete(),
     ],
+    normalizationContext: ["groups" => ["expense:read"]]
+
 )]
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 class Expense
@@ -36,24 +38,25 @@ class Expense
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("expense:read")]
     private ?int $id = null;
 
     #[ORM\Column]
     #[Assert\NotBlank]
     #[Assert\Type(\DateTimeImmutable::class)]
+    #[Groups("expense:read")]
     private ?\DateTimeImmutable $date = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-    private ?string $category = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups("expense:read")]
     private ?string $description = null;
 
     #[ORM\Column]
     #[Assert\NotBlank]
     #[Assert\Type('float')]
+    #[Groups("expense:read")]
     private ?float $amount = null;
 
     #[ORM\ManyToOne(inversedBy: 'expenses')]
@@ -61,6 +64,10 @@ class Expense
     #[Assert\NotBlank]
     #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?User $userEntity = null;
+
+    #[ORM\ManyToOne(inversedBy: 'expenses')]
+    #[Groups("expense:read")]
+    private ?Category $category = null;
 
     public function getId(): ?int
     {
@@ -79,17 +86,7 @@ class Expense
         return $this;
     }
 
-    public function getCategory(): ?string
-    {
-        return $this->category;
-    }
 
-    public function setCategory(string $category): self
-    {
-        $this->category = $category;
-
-        return $this;
-    }
 
     public function getDescription(): ?string
     {
@@ -123,6 +120,18 @@ class Expense
     public function setUserEntity(?User $userEntity): self
     {
         $this->userEntity = $userEntity;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
