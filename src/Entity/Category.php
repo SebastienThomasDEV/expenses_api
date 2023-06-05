@@ -20,6 +20,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
+
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ApiResource(
     operations: [
@@ -52,6 +53,11 @@ class Category
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Expense::class)]
     private Collection $expenses;
+
+    #[ORM\ManyToOne(inversedBy: 'categories')]
+    #[Assert\NotBlank]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -113,6 +119,18 @@ class Category
                 $expense->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
